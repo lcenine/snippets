@@ -1,0 +1,56 @@
+/* Add this to your functions.php*/
+
+
+
+/* single product add to cart... not Ajax */
+
+
+add_action( 'wp_footer', 'trigger_for_add_to_cart' );
+function trigger_for_add_to_cart() {
+    if ( isset($_POST['add-to-cart']) && $_POST['add-to-cart'] > 0
+    && isset($_POST['quantity']) && $_POST['quantity'] > 0 ) :
+    ?>
+    <script type="text/javascript">
+        (function($){
+            $( ".single_add_to_cart_button" ).html( "Added To Cart" );
+            // Display an alert for testing purpose (To be removed)
+            console.log("added to the cart");
+        })(jQuery);
+    </script>
+    <?php
+    endif;
+}
+
+
+
+/*Ajax Add To Cart*/
+
+function ajaxAddToCart_enqueue_scripts() {
+  wp_enqueue_script( 
+    'my-script',
+    get_stylesheet_directory_uri() . '/js/custom.js', 
+    array('jquery'),
+    '1.0.0',
+    true );
+}
+
+add_action( 'wp_enqueue_scripts', 'ajaxAddToCart_enqueue_scripts' );
+
+/* end of insert for functions.php*/
+
+
+
+/*                                                                                                                  */
+/* And create a file called custom.js in the same directory as functions.php (that would be your theme directory)   */
+/*  and add the below to that file.                                                                                 */
+
+(function($){
+           $('body').on( 'added_to_cart', function(e, fragments, cart_hash, this_button){
+             $(this_button).html( "Added To Cart" );
+             
+             // console.log($(this_button).data('product_id'));
+              
+           });
+        })(jQuery);
+
+
