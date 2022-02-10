@@ -1,0 +1,71 @@
+ /* dynamic login and logout in menu */
+function add_login_logout_register_menu( $items, $args ) {
+  $login = home_url( '/my-account/' );
+  $logout = home_url( '/my-account/' );
+  if ( $args->theme_location == 68 ) {
+    return $items;
+  }
+  if ( is_user_logged_in() ) {
+    $items .= '<li class="menu-item menu-item-type-post_type menu-item-object-page custom-color "><a href="' . $logout . '">' . __( 'My Account' ) . '</a></li>';
+  }
+  else {
+    $items .= '<li class="custom-color"><a href="' . $login . '">' . __( 'Login' ) . '</a></li>';
+  }
+  return $items;
+} 
+add_filter( 'wp_nav_menu_items', 'add_login_logout_register_menu', 199, 2 );
+
+
+
+
+
+
+/* adding string  to menu item for logged in users to prevent cached content from showing
+Or also changing the url of a menu item for logged in users
+*/
+
+
+add_filter('wp_nav_menu_objects', 'ad_filter_menu', 10, 2);
+
+function ad_filter_menu($sorted_menu_objects, $args) {
+    // check for the right menu to rename the menu item from
+    // here we check for theme location of 'primary-menu'
+    // alternatively you can check for menu name ($args->menu == 'menu_name')
+
+    if ($args->theme_location != 'primary')  
+        return $sorted_menu_objects;
+
+    // rename the menu item that has a title of 'Log ind'
+        if (is_user_logged_in()) {
+            foreach ($sorted_menu_objects as $key => $menu_object) {
+                // can also check for $menu_object->url for example
+                // see all properties to test against:
+              //  print_r($menu_object); 
+             //   print_r($menu_object); die();
+                if ($menu_object->title == 'Webinar') {
+                 
+                //  print_r($menu_object); 
+                 
+                 //  $current_user = wp_get_current_user();
+                    $menu_object->title =  "Webinar";
+                    substr($string, 0, -1);
+
+   // The below line will prevent caching issues.
+        $menu_object->url = substr($menu_object->url, 0, -1) . "?loggedin";
+
+
+/*  USE THE BELOW LINE TO CHANGE THE URL TO A DIFFERENT ONE*/
+
+            //       $menu_object->url = site_url() . "/Webinar-Purchased";
+                
+
+
+                //$menu_object->url = $menu_object->url . "zzz";
+                   // $menu_object->url = wp_logout_url();;
+                }
+            }
+        }
+    return $sorted_menu_objects;
+}
+
+
